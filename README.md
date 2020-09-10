@@ -1,0 +1,1 @@
+removes old process history instances from camunda
