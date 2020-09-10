@@ -54,10 +54,12 @@ func TestCleanupLongLocalFilter(t *testing.T) {
 }
 
 func TestCleanupExtraLong(t *testing.T) {
+	t.Skip()
 	t.Run("with batch", testCleanup(500, 100000, false, true))
 }
 
 func TestCleanupExtraLongLocalFilter(t *testing.T) {
+	t.Skip()
 	t.Run("with batch", testCleanup(500, 100000, false, true))
 }
 
