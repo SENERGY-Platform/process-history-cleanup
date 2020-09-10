@@ -108,6 +108,7 @@ func testRunCleanup(camundaUrl string, maxAge string, batchSize int, filterLocal
 			MaxAge:        maxAge,
 			BatchSize:     batchSize,
 			FilterLocally: filterLocally,
+			Location:      "Europe/Berlin",
 		})
 		if err != nil {
 			t.Error(err)

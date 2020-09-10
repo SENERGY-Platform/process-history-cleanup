@@ -16,12 +16,22 @@
 
 package camunda
 
-import "process-history-cleanup/pkg/configuration"
+import (
+	"log"
+	"process-history-cleanup/pkg/configuration"
+	"time"
+)
 
 type Camunda struct {
-	config configuration.Config
+	config   configuration.Config
+	location *time.Location
 }
 
 func New(config configuration.Config) *Camunda {
-	return &Camunda{config: config}
+	location, err := time.LoadLocation(config.Location)
+	if err != nil {
+		log.Println("unable to load location")
+		location, _ = time.LoadLocation("Europe/Berlin")
+	}
+	return &Camunda{config: config, location: location}
 }

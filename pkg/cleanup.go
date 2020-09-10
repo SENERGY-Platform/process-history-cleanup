@@ -23,7 +23,6 @@ import (
 	"process-history-cleanup/pkg/configuration"
 	"strconv"
 	"time"
-	_ "time/tzdata"
 )
 
 func RunCleanup(config configuration.Config) (err error) {

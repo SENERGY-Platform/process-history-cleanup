@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"runtime/debug"
 	"time"
+	_ "time/tzdata"
 )
 
 func (this *Camunda) ListHistory(limit string, offset string, sortby string, sortdirection string, finished bool) (result HistoricProcessInstances, err error) {
@@ -69,7 +70,7 @@ func (this *Camunda) ListHistoryFinishedBefore(limit string, offset string, sort
 		"firstResult":    []string{offset},
 		"sortBy":         []string{sortby},
 		"sortOrder":      []string{sortdirection},
-		"finishedBefore": []string{before.Format(CamundaTimeFormat)},
+		"finishedBefore": []string{before.In(this.location).Format(CamundaTimeFormat)},
 	}
 	if finished {
 		params["finished"] = []string{"true"}
