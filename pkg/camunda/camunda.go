@@ -17,8 +17,8 @@
 package camunda
 
 import (
+	"github.com/SENERGY-Platform/process-history-cleanup/pkg/configuration"
 	"log"
-	"process-history-cleanup/pkg/configuration"
 	"time"
 )
 

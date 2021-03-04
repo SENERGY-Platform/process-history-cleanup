@@ -1,4 +1,4 @@
-module process-history-cleanup
+module github.com/SENERGY-Platform/process-history-cleanup
 
 go 1.15
 

@@ -17,7 +17,7 @@
 package pkg
 
 import (
-	"process-history-cleanup/pkg/camunda"
+	"github.com/SENERGY-Platform/process-history-cleanup/pkg/camunda"
 	"time"
 )
 

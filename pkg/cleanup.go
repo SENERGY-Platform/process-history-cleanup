@@ -18,9 +18,9 @@ package pkg
 
 import (
 	"errors"
+	"github.com/SENERGY-Platform/process-history-cleanup/pkg/camunda"
+	"github.com/SENERGY-Platform/process-history-cleanup/pkg/configuration"
 	"log"
-	"process-history-cleanup/pkg/camunda"
-	"process-history-cleanup/pkg/configuration"
 	"strconv"
 	"time"
 )

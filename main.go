@@ -18,9 +18,9 @@ package main
 
 import (
 	"flag"
+	"github.com/SENERGY-Platform/process-history-cleanup/pkg"
+	"github.com/SENERGY-Platform/process-history-cleanup/pkg/configuration"
 	"log"
-	"process-history-cleanup/pkg"
-	"process-history-cleanup/pkg/configuration"
 	"time"
 )
 
