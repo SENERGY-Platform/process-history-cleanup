@@ -3,51 +3,70 @@ package docker
 import (
 	"context"
 	"errors"
-	"github.com/ory/dockertest/v3"
+	"fmt"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 	"log"
 	"net/http"
 	"sync"
+	"time"
 )
 
-func Camunda(ctx context.Context, wg *sync.WaitGroup, dbIp string) (url string, err error) {
+func Camunda(ctx context.Context, wg *sync.WaitGroup, pgIp string, pgPort string) (camundaUrl string, err error) {
 	log.Println("start camunda")
-	pool, err := dockertest.NewPool("")
-	if err != nil {
-		return url, err
-	}
-	container, err := pool.Run("fgseitsrancher.wifa.intern.uni-leipzig.de:5000/process-engine", "prod", []string{
-		"DB_USERNAME=camunda",
-		"DB_URL=jdbc:postgresql://" + dbIp + ":5432/camunda",
-		"DB_PORT=5432",
-		"DB_PASSWORD=camunda",
-		"DB_NAME=camunda",
-		"DB_HOST=" + dbIp,
-		"DB_DRIVER=org.postgresql.Driver",
+	dbName := "camunda"
+	c, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: testcontainers.ContainerRequest{
+			Image:        "ghcr.io/senergy-platform/process-engine:dev",
+			ExposedPorts: []string{"8080/tcp"},
+			WaitingFor: wait.ForAll(
+				wait.ForListeningPort("8080/tcp"),
+				wait.ForLog("Server initialization in"),
+				wait.ForLog("Server startup in"),
+			),
+			Env: map[string]string{
+				"DB_PASSWORD": "pw",
+				"DB_URL":      "jdbc:postgresql://" + pgIp + ":" + pgPort + "/" + dbName,
+				"DB_PORT":     pgPort,
+				"DB_NAME":     dbName,
+				"DB_HOST":     pgIp,
+				"DB_DRIVER":   "org.postgresql.Driver",
+				"DB_USERNAME": "usr",
+				"DATABASE":    "postgres",
+			},
+		},
+		Started: true,
 	})
 	if err != nil {
 		return "", err
 	}
-	go Dockerlog(pool, ctx, container, "CAMUNDA")
+
 	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		<-ctx.Done()
-		log.Println("DEBUG: remove container " + container.Container.Name)
-		container.Close()
-		wg.Done()
+		log.Println("DEBUG: remove container camunda", c.Terminate(context.Background()))
 	}()
 
-	url = "http://" + container.Container.NetworkSettings.IPAddress + ":8080"
+	containerip, err := c.ContainerIP(ctx)
+	if err != nil {
+		return "", err
+	}
 
-	err = pool.Retry(func() error {
-		log.Println("DEBUG: try to connection to camunda")
-		resp, err := http.Get(url + "/engine-rest/case-instance/count")
+	camundaUrl = fmt.Sprintf("http://%s:%s", containerip, "8080")
+
+	err = Retry(time.Minute, func() error {
+		log.Println("try camunda connection...")
+		resp, err := http.Get(camundaUrl + "/engine-rest/metrics")
 		if err != nil {
 			return err
 		}
 		if resp.StatusCode != 200 {
-			return errors.New(resp.Status)
+			log.Println("unexpectet response code", resp.StatusCode, resp.Status)
+			return errors.New("unexpectet response code: " + resp.Status)
 		}
 		return nil
 	})
-	return url, err
+
+	return camundaUrl, err
 }

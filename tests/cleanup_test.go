@@ -70,13 +70,17 @@ func testCleanup(batchSize int, deleteCount int, expectSurvivor bool, filterLoca
 		defer wg.Wait()
 		defer cancel()
 
-		pgip, err := docker.Postgres(ctx, wg)
+		_, camundaPgIp, _, err := docker.PostgresWithNetwork(ctx, wg, "camunda")
 		if err != nil {
 			t.Error(err)
 			return
 		}
 
-		camundaUrl, err := docker.Camunda(ctx, wg, pgip)
+		camundaUrl, err := docker.Camunda(ctx, wg, camundaPgIp, "5432")
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
 		processId := ""
 		t.Run("create process", testCreateProcess(camundaUrl, &processId))
