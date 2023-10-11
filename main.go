@@ -49,7 +49,7 @@ func main() {
 		for range ticker.C {
 			err = pkg.RunCleanup(config)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 		}
 	}

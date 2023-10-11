@@ -19,7 +19,8 @@ package camunda
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"runtime/debug"
@@ -52,7 +53,7 @@ func (this *Camunda) ListHistory(limit string, offset string, sortby string, sor
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode >= 300 {
-		buf, _ := ioutil.ReadAll(resp.Body)
+		buf, _ := io.ReadAll(resp.Body)
 		err = fmt.Errorf("%w %v %v", ErrUnexpectedResponse, resp.Status, string(buf))
 		return result, err
 	}
@@ -60,6 +61,9 @@ func (this *Camunda) ListHistory(limit string, offset string, sortby string, sor
 	if err != nil {
 		err = fmt.Errorf("%w %v", ErrUnexpectedResponse, err.Error())
 		return result, err
+	}
+	if this.config.Debug {
+		log.Printf("DEBUG: read %v elements from %v", len(result), path)
 	}
 	return result, err
 }
@@ -90,7 +94,7 @@ func (this *Camunda) ListHistoryFinishedBefore(limit string, offset string, sort
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode >= 300 {
-		buf, _ := ioutil.ReadAll(resp.Body)
+		buf, _ := io.ReadAll(resp.Body)
 		err = fmt.Errorf("%w %v %v", ErrUnexpectedResponse, resp.Status, string(buf))
 		return result, err
 	}
@@ -98,6 +102,9 @@ func (this *Camunda) ListHistoryFinishedBefore(limit string, offset string, sort
 	if err != nil {
 		err = fmt.Errorf("%w %v", ErrUnexpectedResponse, err.Error())
 		return result, err
+	}
+	if this.config.Debug {
+		log.Printf("DEBUG: read %v elements from %v", len(result), path)
 	}
 	return result, err
 }
@@ -122,7 +129,7 @@ func (this *Camunda) ListHistoryCount(finished bool) (result Count, err error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode >= 300 {
-		buf, _ := ioutil.ReadAll(resp.Body)
+		buf, _ := io.ReadAll(resp.Body)
 		err = fmt.Errorf("%w %v %v", ErrUnexpectedResponse, resp.Status, string(buf))
 		return result, err
 	}
@@ -130,6 +137,9 @@ func (this *Camunda) ListHistoryCount(finished bool) (result Count, err error) {
 	if err != nil {
 		err = fmt.Errorf("%w %v", ErrUnexpectedResponse, err.Error())
 		return result, err
+	}
+	if this.config.Debug {
+		log.Printf("DEBUG: read %v from %v", result.Count, path)
 	}
 	return result, err
 }

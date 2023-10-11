@@ -26,6 +26,7 @@ import (
 )
 
 func RunCleanup(config configuration.Config) (err error) {
+	log.Println("RunCleanup")
 	maxAge, err := time.ParseDuration(config.MaxAge)
 	if err != nil {
 		return err

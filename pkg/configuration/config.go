@@ -34,6 +34,7 @@ type ConfigStruct struct {
 	FilterLocally bool   `json:"filter_locally"`
 	Location      string `json:"location"`
 	Interval      string `json:"interval"`
+	Debug         bool   `json:"debug"`
 }
 
 type Config = *ConfigStruct

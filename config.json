@@ -4,5 +4,6 @@
   "batch_size": 100,
   "filter_locally": false,
   "location": "Europe/Berlin",
-  "interval": ""
+  "interval": "",
+  "debug": false
 }
