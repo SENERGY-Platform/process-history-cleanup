@@ -33,6 +33,7 @@ type ConfigStruct struct {
 	BatchSize     int    `json:"batch_size"`
 	FilterLocally bool   `json:"filter_locally"`
 	Location      string `json:"location"`
+	Interval      string `json:"interval"`
 }
 
 type Config = *ConfigStruct
